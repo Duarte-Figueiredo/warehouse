@@ -1,0 +1,8 @@
+[api]
+port = "9000"
+
+[database]
+host = "localhost"
+user = "user_warehouse"
+password = "1122"
+dbname = "api_warehouse"
