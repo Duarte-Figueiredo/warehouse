@@ -39,6 +39,7 @@ func Load() error {
 		log.Fatal(err)
 		return err
 	}
+	fmt.Println(&cfg)
 
 	return nil
 }

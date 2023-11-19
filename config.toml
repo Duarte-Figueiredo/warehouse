@@ -2,7 +2,7 @@
 Port = "8080"
 
 [DB]
-Host = "127.0.0.3"
+Host = "postgres_container"
 Port = "5432"
 User = "root"
 Password = "root"
