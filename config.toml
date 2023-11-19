@@ -1,8 +1,9 @@
-[api]
-port = "9000"
+[API]
+Port = "8080"
 
-[database]
-host = "localhost"
-user = "user_warehouse"
-password = "1122"
-dbname = "api_warehouse"
+[DB]
+Host = "127.0.0.3"
+Port = "5432"
+User = "root"
+Password = "root"
+DataBase = "postgres"

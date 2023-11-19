@@ -1,7 +1,11 @@
 package configs
 
 import (
-	"github.com/spf13/viper"
+	"fmt"
+	"log"
+	"path/filepath"
+
+	"github.com/BurntSushi/toml"
 )
 
 var cfg *config
@@ -23,46 +27,22 @@ type DBConfig struct {
 	DataBase string
 }
 
-func init() {
-
-	viper.SetDefault("api.port", "9000")
-	viper.SetDefault("database.host", "localhost")
-	viper.SetDefault("database.port", "5432")
-}
-
 func Load() error {
-	viper.SetConfigName("config")
-	viper.SetConfigType("toml")
-	viper.AddConfigPath(".")
-	err := viper.ReadInConfig()
+
+	absolutePath, err := filepath.Abs("config.toml")
 	if err != nil {
-		//valida tipo de erro for diferente de nao encontrei o arquivo
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			return err
-		}
+		fmt.Println("Erro ao obter o caminho absoluto:", err)
+		return err
 	}
 
-	//cria um ponteiro da nossa struct
-	cfg = new(config)
-
-	cfg.API = APIConfig{
-		Port: viper.GetString("api.port"),
+	if _, err = toml.DecodeFile(absolutePath, &cfg); err != nil {
+		log.Fatal(err)
+		return err
 	}
 
-	cfg.DB = DBConfig{
-		Host:     viper.GetString("database.host"),
-		Port:     viper.GetString("database.port"),
-		User:     viper.GetString("database.user"),
-		Password: viper.GetString("database.password"),
-		DataBase: viper.GetString("database.dbname"),
-	}
-
-	//porque nao houve nenhum erro, no golang sempre retornamos nil quando a funcao nao retorna erro
 	return nil
-
 }
 
-// accessar as informacoes
 func GetDB() DBConfig {
 	return cfg.DB
 }

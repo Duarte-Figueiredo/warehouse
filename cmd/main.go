@@ -2,29 +2,28 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
-	"github.com/tamiresviegas/warehouse/handlers"
+	"github.com/tamiresviegas/warehouse/configs"
 
 	"github.com/go-chi/chi"
-	"github.com/tamiresviegas/warehouse/configs"
+	"github.com/tamiresviegas/warehouse/handlers"
 )
 
 func main() {
+
+	fmt.Println("Entrei aqui")
+
 	err := configs.Load()
 	if err != nil {
-		return
+		log.Fatal(err)
 	}
 
 	r := chi.NewRouter()
-
-	r.Post("/", handlers.Create)
-	r.Put("/{id}", handlers.Update)
-	r.Delete("/{id}", handlers.Delete)
 	r.Get("/", handlers.GetAll)
-	r.Get("/{id}", handlers.Get)
+	r.Delete("/{id}", handlers.Delete)
 
 	http.ListenAndServe(fmt.Sprintf(":%s", configs.GetServerPort()), r)
+
 }
-
-
