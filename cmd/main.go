@@ -21,8 +21,11 @@ func main() {
 	}
 
 	r := chi.NewRouter()
-	r.Get("/", handlers.GetAll)
+	r.Post("/", handlers.Create)
+	r.Put("/{id}", handlers.Update)
 	r.Delete("/{id}", handlers.Delete)
+	r.Get("/", handlers.GetAll)
+	r.Get("/{id}", handlers.Get)
 
 	http.ListenAndServe(fmt.Sprintf(":%s", configs.GetServerPort()), r)
 
