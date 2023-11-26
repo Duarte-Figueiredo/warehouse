@@ -11,14 +11,18 @@ services:
       - db
   db:
     container_name: postgres_container
+    build:
+      context: .
+      dockerfile: db.Dockerfile
     image: postgres
     restart: always
     environment:
+      POSTGRES_HOST: localhost
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
       POSTGRES_DB: postgres
     ports:
-      - "5441:5432"
+      - "5432:5432"
   pgadmin:
     container_name: pgadmin4_container
     image: dpage/pgadmin4
