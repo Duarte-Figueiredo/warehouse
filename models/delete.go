@@ -10,7 +10,7 @@ func Delete(id int64) (int64, error) {
 	}
 	defer conn.Close()
 
-	res, err := conn.Exec(`delete from produtos WHERE id = $2`, id)
+	res, err := conn.Exec(`delete from product WHERE id = $2`, id)
 	if err != nil {
 		return 0, err
 	}

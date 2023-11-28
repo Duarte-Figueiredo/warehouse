@@ -13,7 +13,7 @@ import (
 
 func main() {
 
-	fmt.Println("Entrei aqui")
+	fmt.Println("Started warehouse app")
 
 	err := configs.Load()
 	if err != nil {

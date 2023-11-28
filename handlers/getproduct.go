@@ -12,13 +12,13 @@ import (
 
 func GetAll(w http.ResponseWriter, r *http.Request) {
 
-	produtos, err := models.GetAll()
+	product, err := models.GetAll()
 	if err != nil {
-		log.Printf("Erro ao obter produtos: %v", err)
+		log.Printf("Erro ao obter product: %v", err)
 	}
 
 	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(produtos)
+	json.NewEncoder(w).Encode(product)
 
 }
 
@@ -31,7 +31,7 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	produtos, err := models.Get(int64(id))
+	product, err := models.Get(int64(id))
 	if err != nil {
 		log.Printf("Erro ao atualizar registro: %v", err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -39,5 +39,5 @@ func Get(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(produtos)
+	json.NewEncoder(w).Encode(product)
 }
