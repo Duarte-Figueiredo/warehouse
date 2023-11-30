@@ -1,7 +1,7 @@
 # warehouse
 
 run docker to build the image
-docker build . -t warehouse
+docker build . -t warehouse_app
 
 after
 docker-compose up

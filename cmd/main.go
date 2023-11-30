@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
 	"log"
 	"net/http"
 
@@ -16,13 +17,13 @@ import (
 
 func main() {
 
-	messageBroker()
-
-	messageBroker()
-
-	messageBroker()
-
 	fmt.Println("Started warehouse app")
+
+	// wait for kafka to be up and running
+	//TODO update docker compose to wait for topic to be created
+	time.Sleep(10 * time.Second)
+
+	messageBroker()
 
 	err := configs.Load()
 	if err != nil {
@@ -43,7 +44,7 @@ func main() {
 func messageBroker() {
 	// PRODUCER:
 	writer := &kafka.Writer{
-		Addr:  kafka.TCP("localhost:9092"),
+		Addr:  kafka.TCP("kafka:9092"),
 		Topic: "test",
 	}
 
@@ -63,7 +64,7 @@ func messageBroker() {
 
 	// CONSUMER:
 	reader := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:  []string{"localhost:9092"},
+		Brokers:  []string{"kafka:9092"},
 		GroupID:  "consumer",
 		Topic:    "test",
 		MinBytes: 0,
@@ -75,7 +76,7 @@ func messageBroker() {
 
 		for _, val := range message.Headers {
 			if val.Key == "session" && string(val.Value) == "123" {
-				fmt.Print("sessao correta")
+				fmt.Print("correct session")
 			}
 		}
 
