@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"time"
 	"log"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/tamiresviegas/warehouse/configs"
 
@@ -19,17 +20,21 @@ func main() {
 
 	fmt.Println("Started warehouse app")
 
-	// wait for kafka to be up and running
-	//TODO update docker compose to wait for topic to be created
-	time.Sleep(10 * time.Second)
-
-	messageBroker()
-
 	err := configs.Load()
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	fmt.Println("1.")
+	kafkaUrl := GetEnvDefault("KAFKA_URL", "")    // kafka:9092
+	topicName := GetEnvDefault("KAFKA_TOPIC", "") //test
+
+	subscribeToKafka(kafkaUrl, topicName)
+
+	startApi()
+}
+
+func startApi() {
 	r := chi.NewRouter()
 	r.Post("/", handlers.Create)
 	r.Put("/{id}", handlers.Update)
@@ -38,16 +43,33 @@ func main() {
 	r.Get("/{id}", handlers.Get)
 
 	http.ListenAndServe(fmt.Sprintf(":%s", configs.GetServerPort()), r)
-
 }
 
-func messageBroker() {
-	// PRODUCER:
-	writer := &kafka.Writer{
-		Addr:  kafka.TCP("kafka:9092"),
-		Topic: "test",
+func subscribeToKafka(kafkaUrl string, topicName string) {
+
+	if kafkaUrl == "" {
+		fmt.Println("Skipping kafka initialization due to missing 'KAFKA_URL' environment variable")
+		return
 	}
 
+	if topicName == "" {
+		fmt.Println("Skipping kafka initialization due to missing 'KAFKA_TOPIC' environment variable")
+		return
+	}
+
+	// wait for kafka to be up and running
+	//TODO update docker compose to wait for topic to be created
+	time.Sleep(10 * time.Second)
+
+	fmt.Println("connecting to " + kafkaUrl)
+
+	// PRODUCER:
+	writer := &kafka.Writer{
+		Addr:  kafka.TCP(kafkaUrl),
+		Topic: topicName,
+	}
+
+	fmt.Println("Writing test message to topic " + topicName)
 	err := writer.WriteMessages(context.Background(), kafka.Message{
 		Value: []byte("mensagem"),
 		Headers: []protocol.Header{
@@ -64,9 +86,9 @@ func messageBroker() {
 
 	// CONSUMER:
 	reader := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:  []string{"kafka:9092"},
+		Brokers:  []string{kafkaUrl},
 		GroupID:  "consumer",
-		Topic:    "test",
+		Topic:    topicName,
 		MinBytes: 0,
 		MaxBytes: 10e6, // 10MB
 	})
@@ -76,7 +98,7 @@ func messageBroker() {
 
 		for _, val := range message.Headers {
 			if val.Key == "session" && string(val.Value) == "123" {
-				fmt.Print("correct session")
+				fmt.Println("correct session")
 			}
 		}
 
@@ -89,4 +111,14 @@ func messageBroker() {
 	}
 
 	reader.Close()
+}
+
+func GetEnvDefault(key, defVal string) string {
+	val, ex := os.LookupEnv(key)
+
+	if !ex {
+		return defVal
+	}
+
+	return val
 }

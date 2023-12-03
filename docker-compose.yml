@@ -50,9 +50,8 @@ services:
   
   app:
     container_name: "warehouse_app"
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: "."
+    image: "warehouse_app"
     ports:
       - "8080:8080"
     depends_on:
@@ -61,6 +60,9 @@ services:
       - init-kafka
     networks:
       - warehouse_network
+    environment:
+      KAFKA_URL: 'kafka:9092'
+      KAFKA_TOPIC: 'test'
 
   db:
     image: postgres
