@@ -1,9 +1,6 @@
-name: Backend build pipeline
+name: Pipeline
 
 on:
-  pull_request:
-    branches:
-      - main
   push:
     branches:
       - main
