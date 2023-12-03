@@ -14,7 +14,6 @@ defaults:
 
 jobs:
   push-docker-image:
-    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: read
