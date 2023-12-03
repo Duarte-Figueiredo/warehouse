@@ -37,4 +37,4 @@ jobs:
           context: .
           file: "Dockerfile"
           push: true
-          tags: ghcr.io/Duarte-Figueiredo/warehouse:latest,ghcr.io/Duarte-Figueiredo/warehouse:${{ github.sha }}
+          tags: ghcr.io/duarte-figueiredo/warehouse:latest,ghcr.io/duarte-figueiredo/warehouse:${{ github.sha }}
