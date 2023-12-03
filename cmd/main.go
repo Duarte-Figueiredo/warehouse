@@ -25,7 +25,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("1.")
 	kafkaUrl := GetEnvDefault("KAFKA_URL", "")    // kafka:9092
 	topicName := GetEnvDefault("KAFKA_TOPIC", "") //test
 
