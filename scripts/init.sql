@@ -1,16 +1,16 @@
 DO $$ 
 BEGIN
-    RAISE NOTICE 'Iniciando execução do script init.sql...';
+    RAISE NOTICE 'Starting init.sql...';
     
-    CREATE TABLE produtos (
+    CREATE TABLE product (
         id SERIAL PRIMARY KEY,
         name VARCHAR(100)
     );
 
-    RAISE NOTICE 'Tabela produtos criada com sucesso.';
+    RAISE NOTICE 'Table product created';
     
-    INSERT INTO produtos (name) VALUES ('Cadeira');
-    INSERT INTO produtos (name) VALUES ('Mesa');
+    INSERT INTO product (name) VALUES ('Cadeira');
+    INSERT INTO product (name) VALUES ('Mesa');
 
-    RAISE NOTICE 'Dados inseridos na tabela produtos.';
+    RAISE NOTICE 'Sucessfully processed init.sql';
 END $$;

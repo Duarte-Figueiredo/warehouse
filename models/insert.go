@@ -12,7 +12,7 @@ func Insert(produto Produto) (id int64, err error) {
 	}
 	defer conn.Close()
 
-	sql := `INSERT INTO produtos (name) values ($1) RETURNING id`
+	sql := `INSERT INTO product (name) values ($1) RETURNING id`
 
 	err = conn.QueryRow(sql, produto.Name).Scan(&id)
 

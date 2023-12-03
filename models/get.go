@@ -17,7 +17,7 @@ func Get(id int64) (produto Produto, err error) {
 	return
 }
 
-func GetAll() (produtos []Produto, err error) {
+func GetAll() (product []Produto, err error) {
 
 	conn, err := db.OpenConnection()
 	if err != nil {
@@ -38,7 +38,7 @@ func GetAll() (produtos []Produto, err error) {
 			continue
 		}
 
-		produtos = append(produtos, produto)
+		product = append(product, produto)
 	}
 
 	return

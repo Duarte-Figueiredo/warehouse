@@ -1,7 +1,10 @@
 # warehouse
 
-run docker to build the image
-docker build . -t warehouse
+## How to run
 
-after
-docker-compose up
+docker run ghcr.io/duarte-figueiredo/warehouse:latest
+
+## How to run locally
+run docker to build the image
+1. docker build . -t warehouse_app
+2. docker-compose up
