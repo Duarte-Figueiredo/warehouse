@@ -10,7 +10,7 @@ servers:
 
 tags:
   - name: products
-    description: 
+    description: |
 
 paths:
   /products:
@@ -36,14 +36,14 @@ paths:
         '500':
           description: Failed to add the product.
 
-  /poducts/{productId}:
+  /products/{productId}:
     get:
       tags:
         - products
       summary: Returns a list of products available and not available in the warehouse, according to the orders’ requirement (price range, time to deliver….)
       description: Returns a list of products available and not available in the warehouse, according to the orders’ requirement (price range, time to deliver….)
       parameters:
-      - in: query
+      - in: path
         name: productId
         description: Id of the product to be deleted
         required: true
@@ -74,7 +74,7 @@ paths:
         '500':
           description: Product not available.
 
-  /poducts/:
+  /products/:
     get:
       tags:
         - products
@@ -92,31 +92,31 @@ paths:
                     items:
                       $ref: '#/components/schemas/Product'
 
-  /poducts/{productName}/{brand}/{priceRange}:
+  /products/{productName}/{brand}/{priceRange}:
     get:
       tags:
         - products
       summary: Gets products based on product name, brand, or priceRange
       description: Gets products based on product name, brand, or priceRange
       parameters:
-      - in: query
+      - in: path
         name: productName
         description: Name of the product.
-        required: false
+        required: true
         schema:
           type: string
           example: leite
-      - in: query
+      - in: path
         name: brand
         description: Name of the brand.
-        required: false
+        required: true
         schema:
           type: string
           example: mimosa
-      - in: query
+      - in: path
         name: priceRange
         description: products’ price interval
-        required: false
+        required: true
         schema:
           type: number
           example: 1.01
