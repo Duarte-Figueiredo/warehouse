@@ -1,0 +1,156 @@
+openapi: 3.0.3
+info:
+  title: Warehouse Service
+  version: '1.0.0'
+  description: |
+    The warehouse service specs
+
+servers:
+  - url: https://warehouse.duartefigueiredo.pt
+
+tags:
+  - name: products
+    description: 
+
+paths:
+  /products:
+    post:
+      tags:
+        - products
+      summary: Add a product to the warehouse
+      description: Add a product to the warehouse
+      requestBody:
+        description: Add a product to the warehouse
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+        required: true
+      responses:
+        '200':
+          description: Product's id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/postProductsResult'
+        '500':
+          description: Failed to add the product.
+
+  /poducts/{productId}:
+    get:
+      tags:
+        - products
+      summary: Returns a list of products available and not available in the warehouse, according to the orders’ requirement (price range, time to deliver….)
+      description: Returns a list of products available and not available in the warehouse, according to the orders’ requirement (price range, time to deliver….)
+      parameters:
+      - in: query
+        name: productId
+        description: Id of the product to be deleted
+        required: true
+        schema:
+          type: integer
+          example: 123
+      responses:
+        '200':
+          description: Returns available and not available products in the warehouse.
+          content:
+            application/json:
+              schema:
+                properties:
+                  available:
+                    type: object
+                    properties:
+                      products:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Product'
+                  not available:
+                    type: object
+                    properties:
+                      products:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Product'
+        '500':
+          description: Product not available.
+
+  /poducts/:
+    get:
+      tags:
+        - products
+      summary: Gets products available in the warehouse
+      description: Gets products available in the warehouse
+      responses:
+        '200':
+          description: Returns all products available in the warehouse.
+          content:
+            application/json:
+              schema:
+                properties:
+                  products:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+
+  /poducts/{productName}/{brand}/{priceRange}:
+    get:
+      tags:
+        - products
+      summary: Gets products based on product name, brand, or priceRange
+      description: Gets products based on product name, brand, or priceRange
+      parameters:
+      - in: query
+        name: productName
+        description: Name of the product.
+        required: false
+        schema:
+          type: string
+          example: leite
+      - in: query
+        name: brand
+        description: Name of the brand.
+        required: false
+        schema:
+          type: string
+          example: mimosa
+      - in: query
+        name: priceRange
+        description: products’ price interval
+        required: false
+        schema:
+          type: number
+          example: 1.01
+      responses:
+        '200':
+          description: return products within the needed filters
+          content:
+            application/json:
+              schema:
+                properties:
+                  products:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        productName: 
+          type: string
+          format: char64
+          example: "leite"
+        brand:
+          type: string
+          example: "mimosa"
+        price:
+          type: number
+          example: 1.01
+    postProductsResult:
+      type: object
+      properties:
+        result:
+          type: integer
+          example: 20
