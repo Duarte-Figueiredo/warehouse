@@ -35,11 +35,11 @@ func main() {
 
 func startApi() {
 	r := chi.NewRouter()
-	r.Post("/", handlers.Create)
-	r.Put("/{id}", handlers.Update)
-	r.Delete("/{id}", handlers.Delete)
-	r.Get("/", handlers.GetAll)
-	r.Get("/{id}", handlers.Get)
+	r.Post("/products/", handlers.Create)
+	r.Put("/products/{id}", handlers.Update)
+	r.Delete("/products/{id}", handlers.Delete)
+	r.Get("/products/", handlers.GetAll)
+	r.Get("/products/{id}", handlers.Get)
 
 	http.ListenAndServe(fmt.Sprintf(":%s", configs.GetServerPort()), r)
 }

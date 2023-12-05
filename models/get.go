@@ -10,7 +10,7 @@ func Get(id int64) (produto Produto, err error) {
 	}
 	defer conn.Close()
 
-	row := conn.QueryRow(`SELECT * FROM PRODUTOS WHERE id=$1`, id)
+	row := conn.QueryRow(`SELECT * FROM PRODUCT WHERE id=$1`, id)
 
 	err = row.Scan(&produto.ID, &produto.Name)
 
@@ -25,7 +25,7 @@ func GetAll() (product []Produto, err error) {
 	}
 	defer conn.Close()
 
-	row, err := conn.Query(`SELECT * FROM PRODUTOS`)
+	row, err := conn.Query(`SELECT * FROM PRODUCT`)
 	if err != nil {
 		return
 	}
