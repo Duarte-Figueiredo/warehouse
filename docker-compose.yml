@@ -67,6 +67,7 @@ services:
 
   db:
     image: postgres
+    container_name: postgres_container
     environment:
       POSTGRES_HOST: localhost
       POSTGRES_USER: root
