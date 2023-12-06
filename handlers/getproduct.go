@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -25,8 +24,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// "Clients should be able to get products based on product category, brand and máximum price"
-// If one of the filds comes empty, it won't filter by that field.
+// "Clients should be able to get products based on product category, brand and maximum price"
 func Get(w http.ResponseWriter, r *http.Request) {
 
 	category := chi.URLParam(r, "category")
@@ -40,17 +38,16 @@ func Get(w http.ResponseWriter, r *http.Request) {
 
 	product, err := models.Get(category, brand, maxPrice)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			log.Printf("There are no products with the category: %v, brand: %v, and maxPrice: %v", category, brand, maxPrice)
-			fmt.Fprintf(w, "There are no products with the category: %s, brand: %s, and maxPrice: %s", category, brand, fmt.Sprintf("%f", maxPrice))
-		} else {
-			log.Printf("Erro ao atualizar registro: %v", err)
-			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		}
-
+		log.Printf("Error while trying to get products: %v", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
+	if len(product) == 0 {
+		log.Printf("There are no products with the category: %v, brand: %v, and maxPrice: %v", category, brand, maxPrice)
+		fmt.Fprintf(w, "There are no products with the category: %s, brand: %s, and maxPrice: %s", category, brand, fmt.Sprintf("%f", maxPrice))
+	} else {
+		w.Header().Add("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(product)
+	}
 
-	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(product)
 }
