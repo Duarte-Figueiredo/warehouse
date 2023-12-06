@@ -37,11 +37,7 @@ func startApi() {
 	r := chi.NewRouter()
 	r.Get("/products/", handlers.GetAll)                                           // "Clients should be able to see a list of available products in the warehouse."
 	r.Get("/products/{category}/{brand}/{maxPrice}", handlers.GetProductsFiltered) // "Clients should be able to get products based on product category, brand and maximum price"
-	r.Put("/products/{reqId}", handlers.SendProducts)                              // "Clients should be able to receive products from the warehouse."
-
-	//r.Delete("/products/{id}", handlers.Delete)
-	//r.Post("/products/", handlers.Create)
-
+	r.Put("/products/{orderPId}", handlers.GetOrderP)                              // "Clients should be able to receive products from the warehouse."
 	http.ListenAndServe(fmt.Sprintf(":%s", configs.GetServerPort()), r)
 }
 

@@ -1,6 +1,6 @@
 package models
 
-type Produto struct {
+type Product struct {
 	ID       int64   `json:"id"`
 	Name     string  `json:"name"`
 	Brand    string  `json:"brand"`
@@ -9,14 +9,14 @@ type Produto struct {
 	Price    float64 `json:"price"`
 }
 
-type Request struct {
+type OrderP struct {
 	ID                 int64  `json:"id"`
 	CategoriesProducts string `json:"categoriesProducts"`
 	MaxPrices          string `json:"maxPrices"`
 	Quantities         string `json:"quantities"`
 }
 
-type ProductRequest struct {
-	Produto []Produto `json:"products"`
-	Request Request   `json:"request"`
+type ProductOrderP struct {
+	Produto []Product `json:"products"`
+	OrderP  OrderP    `json:"order"`
 }

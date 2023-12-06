@@ -13,14 +13,14 @@ BEGIN
 
     RAISE NOTICE 'Table product created';
 
-    CREATE TABLE request (
+    CREATE TABLE orderP (
         id SERIAL PRIMARY KEY,
         categoriesProducts VARCHAR(100),
         maxPrices VARCHAR(100),
         quantities VARCHAR(100)
     );
     
-    RAISE NOTICE 'Table request created';
+    RAISE NOTICE 'Table orderP created';
 
     INSERT INTO product (name, brand, category, quantity, price) VALUES ('Needle Rice', 'Sigala', 'Rice', 3, 1.40);
     INSERT INTO product (name, brand, category, quantity, price) VALUES ('Black Rice', 'Sigala', 'Rice', 3, 1.40);
@@ -34,7 +34,7 @@ BEGIN
 
 
 
-    INSERT INTO request (categoriesProducts, maxPrices, quantities) VALUES ('Rice, Milk, Cheese', '2, 1, 2', '2, 2, 2');
+    INSERT INTO orderP (categoriesProducts, maxPrices, quantities) VALUES ('Rice, Milk, Cheese', '2, 1, 2', '2, 2, 2');
 
     RAISE NOTICE 'Sucessfully processed init.sql';
 END $$;
