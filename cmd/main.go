@@ -39,7 +39,7 @@ func startApi() {
 	r.Get("/products/{category}/{brand}/{maxPrice}", handlers.GetProductsFiltered) // "Clients should be able to get products based on product category, brand and maximum price"
 	r.Put("/products/{orderPId}", handlers.GetOrderP)                              // "Clients should be able to receive products from the warehouse."
 	r.Get("/orders/", handlers.GetAllOrders)                                       // "Clients should be able to see the received orders"
-	r.Post("/orders/", handlers.AddOrder)                                          // "Clients should be able to add products to the data base"
+	r.Post("/orders", handlers.AddOrder)                                           // "Clients should be able to add products to the data base"
 	http.ListenAndServe(fmt.Sprintf(":%s", configs.GetServerPort()), r)
 }
 
