@@ -14,13 +14,13 @@ import (
 // "Clients should be able to see a list of available products in the warehouse."
 func GetAll(w http.ResponseWriter, r *http.Request) {
 
-	product, err := models.GetAllProducts()
+	products, err := models.GetAllProducts()
 	if err != nil {
-		log.Printf("Erro ao obter product: %v", err)
+		log.Printf("Error getting products: %v", err)
 	}
 
 	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(product)
+	json.NewEncoder(w).Encode(products)
 
 }
 
