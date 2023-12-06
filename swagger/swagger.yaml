@@ -13,43 +13,62 @@ tags:
     description: |
 
 paths:
-  /products:
-    post:
-      tags:
-        - products
-      summary: Add a product to the warehouse
-      description: Add a product to the warehouse
-      requestBody:
-        description: Add a product to the warehouse
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Product'
-        required: true
-      responses:
-        '200':
-          description: Product's id.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/postProductsResult'
-        '500':
-          description: Failed to add the product.
-
-  /products/{productId}:
+  /products/:
     get:
       tags:
         - products
-      summary: Returns a list of products available and not available in the warehouse, according to the orders’ requirement (price range, time to deliver….)
-      description: Returns a list of products available and not available in the warehouse, according to the orders’ requirement (price range, time to deliver….)
+      summary: Clients should be able to see a list of available products in the warehouse.
+      description: It returns all products from the warehouse, even if their quantity is 0.
+      responses:
+        '200':
+          description: Returns all products in the warehouse.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+
+  /products/{category}/{brand}/{maxPrice}:
+    get:
+      tags:
+        - products
+      summary: Clients should be able to get products based on product category, brand and maximum price
+      description: Enables filtering products by category, name, and maximum price. It's not possible to filter only by one of those fields. The 3 fiels are aplyed simultaneously.
       parameters:
       - in: path
-        name: productId
-        description: Id of the product to be deleted
+        name: category
+        description: Category of the product.
         required: true
         schema:
-          type: integer
-          example: 123
+          type: string
+          example: Rice
+      - in: path
+        name: brand
+        description: Name of the brand.
+        required: true
+        schema:
+          type: string
+          example: Sigala
+      - in: path
+        name: maxPrice
+        description: Maximum price value to be accepted by the given product
+        required: true
+        schema:
+          type: number
+          example: 1.01
+      responses:
+        '200':
+          description: return products within the needed filters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+
+  /products/{orderId}:
+    put:
+      tags:
+        - products
+      summary: Clients should be able to receive products from the warehouse.
+      description: A list of available and not available products is returned. It doesn't return the produucts with the lower price. It just returns the products within the maximum price defined. Once an order is handled it get's delted. 
       responses:
         '200':
           description: Returns available and not available products in the warehouse.
@@ -74,63 +93,42 @@ paths:
         '500':
           description: Product not available.
 
-  /products/:
+  /orders/:
     get:
       tags:
-        - products
-      summary: Gets products available in the warehouse
-      description: Gets products available in the warehouse
+        - orders
+      summary: Clients should be able to see the received orders
+      description: Returns all orders 
       responses:
         '200':
-          description: Returns all products available in the warehouse.
+          description: Returns all orders in the warehouse.
           content:
             application/json:
               schema:
-                properties:
-                  products:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Product'
-
-  /products/{productName}/{brand}/{priceRange}:
-    get:
+                $ref: '#/components/schemas/Order'
+  
+  /orders:
+    post:
       tags:
-        - products
-      summary: Gets products based on product name, brand, or priceRange
-      description: Gets products based on product name, brand, or priceRange
-      parameters:
-      - in: path
-        name: productName
-        description: Name of the product.
+        - orders
+      summary: Clients should be able to add products to the data base
+      description: Add an order to be attended by the warehouse
+      requestBody:
+        description: Add an order to be attended by the warehouse
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
         required: true
-        schema:
-          type: string
-          example: leite
-      - in: path
-        name: brand
-        description: Name of the brand.
-        required: true
-        schema:
-          type: string
-          example: mimosa
-      - in: path
-        name: priceRange
-        description: products’ price interval
-        required: true
-        schema:
-          type: number
-          example: 1.01
       responses:
         '200':
-          description: return products within the needed filters
+          description: Order id.
           content:
             application/json:
               schema:
-                properties:
-                  products:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Product'
+                $ref: '#/components/schemas/postProductsResult'
+        '500':
+          description: Failed to add the product.
 
 
 components:
@@ -138,16 +136,36 @@ components:
     Product:
       type: object
       properties:
-        productName: 
+        id:
+          type: number
+          example: 1
+        name:
           type: string
-          format: char64
-          example: "leite"
+          example: "Needle Rice"
         brand:
           type: string
-          example: "mimosa"
+          example: "Sigala"
+        category:
+          type: string
+          example: "Rice"
         price:
           type: number
-          example: 1.01
+          example: 1.01´
+    Order:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        categoriesProducts:
+          type: string
+          example: "Rice, Milk, Cheese"
+        maxPrices:
+          type: string
+          example: "2, 1, 2"
+        quantities:
+          type: string
+          example: "2, 2, 2"
     postProductsResult:
       type: object
       properties:
