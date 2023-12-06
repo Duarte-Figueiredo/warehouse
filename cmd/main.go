@@ -39,7 +39,7 @@ func startApi() {
 	r.Put("/products/{id}", handlers.Update)
 	r.Delete("/products/{id}", handlers.Delete)
 	r.Get("/products/", handlers.GetAll)
-	r.Get("/products/{id}", handlers.Get)
+	r.Get("/products/{category}/{brand}/{maxPrice}", handlers.Get)
 
 	http.ListenAndServe(fmt.Sprintf(":%s", configs.GetServerPort()), r)
 }
@@ -58,7 +58,7 @@ func subscribeToKafka(kafkaUrl string, topicName string) {
 
 	// wait for kafka to be up and running
 	//TODO update docker compose to wait for topic to be created
-	time.Sleep(10 * time.Second)
+	time.Sleep(30 * time.Second)
 
 	fmt.Println("connecting to " + kafkaUrl)
 

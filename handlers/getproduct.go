@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -10,6 +12,7 @@ import (
 	"github.com/tamiresviegas/warehouse/models"
 )
 
+// "Clients should be able to see a list of available products in the warehouse."
 func GetAll(w http.ResponseWriter, r *http.Request) {
 
 	product, err := models.GetAll()
@@ -22,19 +25,29 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// "Clients should be able to get products based on product category, brand and máximum price"
+// If one of the filds comes empty, it won't filter by that field.
 func Get(w http.ResponseWriter, r *http.Request) {
 
-	id, err := strconv.Atoi(chi.URLParam(r, "id"))
-	if err != nil {
-		log.Printf("Erro ao fazer parse do id: %v", err)
+	category := chi.URLParam(r, "category")
+	brand := chi.URLParam(r, "brand")
+	maxPrice, errMixPrice := strconv.ParseFloat(chi.URLParam(r, "maxPrice"), 32)
+	if errMixPrice != nil {
+		log.Printf("Parse Error in maxPrice: %v", errMixPrice)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
-	product, err := models.Get(int64(id))
+	product, err := models.Get(category, brand, maxPrice)
 	if err != nil {
-		log.Printf("Erro ao atualizar registro: %v", err)
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		if err == sql.ErrNoRows {
+			log.Printf("There are no products with the category: %v, brand: %v, and maxPrice: %v", category, brand, maxPrice)
+			fmt.Fprintf(w, "There are no products with the category: %s, brand: %s, and maxPrice: %s", category, brand, fmt.Sprintf("%f", maxPrice))
+		} else {
+			log.Printf("Erro ao atualizar registro: %v", err)
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		}
+
 		return
 	}
 
