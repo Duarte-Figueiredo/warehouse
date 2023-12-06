@@ -14,7 +14,7 @@ import (
 // "Clients should be able to see a list of available products in the warehouse."
 func GetAll(w http.ResponseWriter, r *http.Request) {
 
-	product, err := models.GetAll()
+	product, err := models.GetAllProducts()
 	if err != nil {
 		log.Printf("Erro ao obter product: %v", err)
 	}
@@ -25,7 +25,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 }
 
 // "Clients should be able to get products based on product category, brand and maximum price"
-func Get(w http.ResponseWriter, r *http.Request) {
+func GetProductsFiltered(w http.ResponseWriter, r *http.Request) {
 
 	category := chi.URLParam(r, "category")
 	brand := chi.URLParam(r, "brand")
@@ -36,7 +36,7 @@ func Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	product, err := models.Get(category, brand, maxPrice)
+	product, err := models.GetProductFiltered(category, brand, maxPrice)
 	if err != nil {
 		log.Printf("Error while trying to get products: %v", err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

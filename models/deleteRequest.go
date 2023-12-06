@@ -2,7 +2,7 @@ package models
 
 import "github.com/tamiresviegas/warehouse/db"
 
-func Update(id int64, produto Produto) (int64, error) {
+func DeleteRequest(reqId int64) (int64, error) {
 
 	conn, err := db.OpenConnection()
 	if err != nil {
@@ -10,7 +10,7 @@ func Update(id int64, produto Produto) (int64, error) {
 	}
 	defer conn.Close()
 
-	res, err := conn.Exec(`UPDATE product SET name = $1 WHERE id = $2`, produto.Name, produto.ID)
+	res, err := conn.Exec(`delete from request WHERE id = $1`, reqId)
 	if err != nil {
 		return 0, err
 	}
