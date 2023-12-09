@@ -44,6 +44,8 @@ func GetOrderP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// TODO: From the unavailable products it asks the suppliers if they have them
+
 	productOrder := models.ProductOrderP{
 		Produto: productsAvl,
 		OrderP:  orderPUnavailable,
