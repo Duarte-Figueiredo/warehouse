@@ -1,18 +1,17 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
+	"github.com/tamiresviegas/warehouse/cmd/kaffka"
+
 	"github.com/tamiresviegas/warehouse/configs"
 
 	"github.com/go-chi/chi"
-	"github.com/segmentio/kafka-go"
-	"github.com/segmentio/kafka-go/protocol"
 	"github.com/tamiresviegas/warehouse/handlers"
 )
 
@@ -25,10 +24,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	kafkaUrl := GetEnvDefault("KAFKA_URL", "")    // kafka:9092
-	topicName := GetEnvDefault("KAFKA_TOPIC", "") //test
+	kafkaUrl := GetEnvDefault("KAFKA_URL", "") // kafka:9092
+	topicSend := GetEnvDefault("KAFKA_TOPIC_SEND", "")
+	topicSold := GetEnvDefault("KAFKA_TOPIC_SOLD", "")
 
-	subscribeToKafka(kafkaUrl, topicName)
+	fmt.Println("Topic: " + topicSend + " will be used to writing messages.") // TODO
+	fmt.Println("Topic: " + topicSold + " will be used to read messages.")
+
+	connection(kafkaUrl, topicSold)
+	go kaffka.StartKafka(kafkaUrl, topicSold)
+
+	//productSold(kafkaUrl, topicSold)
 
 	startApi()
 }
@@ -40,8 +46,7 @@ func startApi() {
 	http.ListenAndServe(fmt.Sprintf(":%s", configs.GetServerPort()), r)
 }
 
-func subscribeToKafka(kafkaUrl string, topicName string) {
-
+func connection(kafkaUrl string, topicName string) {
 	if kafkaUrl == "" {
 		fmt.Println("Skipping kafka initialization due to missing 'KAFKA_URL' environment variable")
 		return
@@ -57,55 +62,6 @@ func subscribeToKafka(kafkaUrl string, topicName string) {
 	time.Sleep(30 * time.Second)
 
 	fmt.Println("connecting to " + kafkaUrl)
-
-	// PRODUCER:
-	writer := &kafka.Writer{
-		Addr:  kafka.TCP(kafkaUrl),
-		Topic: topicName,
-	}
-
-	fmt.Println("Writing test message to topic " + topicName)
-	err := writer.WriteMessages(context.Background(), kafka.Message{
-		Value: []byte("mensagem"),
-		Headers: []protocol.Header{
-			{
-				Key:   "session",
-				Value: []byte("123"),
-			},
-		},
-	})
-
-	if err != nil {
-		log.Fatal("cannot write a message: ", err)
-	}
-
-	// CONSUMER:
-	reader := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:  []string{kafkaUrl},
-		GroupID:  "consumer",
-		Topic:    topicName,
-		MinBytes: 0,
-		MaxBytes: 10e6, // 10MB
-	})
-
-	for i := 0; i < 1; i++ {
-		message, err := reader.ReadMessage(context.Background())
-
-		for _, val := range message.Headers {
-			if val.Key == "session" && string(val.Value) == "123" {
-				fmt.Println("correct session")
-			}
-		}
-
-		if err != nil {
-			log.Fatal("cannot receive a message: ", err)
-			reader.Close()
-		}
-
-		fmt.Print("receive a message: ", string(message.Value))
-	}
-
-	reader.Close()
 }
 
 func GetEnvDefault(key, defVal string) string {
