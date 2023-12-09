@@ -2,7 +2,8 @@ package models
 
 import "github.com/tamiresviegas/warehouse/db"
 
-func UpdateProduct(product Product) (int64, error) {
+// Updates a specific product
+func UpdateProduct(id int64, quantity int) (int64, error) {
 
 	conn, err := db.OpenConnection()
 	if err != nil {
@@ -10,7 +11,7 @@ func UpdateProduct(product Product) (int64, error) {
 	}
 	defer conn.Close()
 
-	res, err := conn.Exec(`UPDATE product SET quantity = $1 WHERE id = $2`, product.Quantity, product.ID)
+	res, err := conn.Exec(`UPDATE product SET quantity = $1 WHERE product_id = $2`, quantity, id)
 	if err != nil {
 		return 0, err
 	}

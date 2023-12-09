@@ -2,10 +2,10 @@ package kaffka
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/segmentio/kafka-go"
+	"github.com/tamiresviegas/warehouse/handlers"
 )
 
 func StartKafka(kafkaUrl string, topicName string) {
@@ -27,7 +27,7 @@ func StartKafka(kafkaUrl string, topicName string) {
 		}
 
 		// Quando a mensagem é recebida tenho de chamar o handler que dá update à tabela dos produtos
-		fmt.Println("receive a message: ", string(message.Value)) // [{"product_id":"product1","quantity":3},{"product_id":"product2","quantity":2},{"product_id":"product3","quantity":1}]
+		handlers.UpdateProducts(message)
 	}
 
 }

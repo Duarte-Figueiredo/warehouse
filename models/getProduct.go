@@ -4,6 +4,34 @@ import (
 	"github.com/tamiresviegas/warehouse/db"
 )
 
+// Returns all products stored in the DB
+func GetAllProducts() (products []Product, err error) {
+
+	conn, err := db.OpenConnection()
+	if err != nil {
+		return
+	}
+	defer conn.Close()
+
+	row, err := conn.Query(`SELECT * FROM PRODUCT`)
+	if err != nil {
+		return
+	}
+
+	for row.Next() {
+		var product Product
+
+		err = row.Scan(&product.Product_ID, &product.Name, &product.Brand, &product.Category, &product.Quantity, &product.Price)
+		if err != nil {
+			continue
+		}
+
+		products = append(products, product)
+	}
+
+	return
+}
+
 // Queries DB to return only the products with the given fields (it has to match all the filtering fields)
 func GetProductFiltered(category string, brand string, maxPrice float64) (products []Product, err error) {
 
@@ -22,35 +50,7 @@ func GetProductFiltered(category string, brand string, maxPrice float64) (produc
 	for row.Next() {
 		var product Product
 
-		err = row.Scan(&product.ID, &product.Name, &product.Brand, &product.Category, &product.Quantity, &product.Price)
-		if err != nil {
-			continue
-		}
-
-		products = append(products, product)
-	}
-
-	return
-}
-
-// Returns all products stored in the DB
-func GetAllProducts() (products []Product, err error) {
-
-	conn, err := db.OpenConnection()
-	if err != nil {
-		return
-	}
-	defer conn.Close()
-
-	row, err := conn.Query(`SELECT * FROM PRODUCT`)
-	if err != nil {
-		return
-	}
-
-	for row.Next() {
-		var product Product
-
-		err = row.Scan(&product.ID, &product.Name, &product.Brand, &product.Category, &product.Quantity, &product.Price)
+		err = row.Scan(&product.Product_ID, &product.Name, &product.Brand, &product.Category, &product.Quantity, &product.Price)
 		if err != nil {
 			continue
 		}

@@ -3,7 +3,7 @@ BEGIN
     RAISE NOTICE 'Starting init.sql...';
     
     CREATE TABLE product (
-        id SERIAL PRIMARY KEY,
+        product_id SERIAL PRIMARY KEY,
         name VARCHAR(100),
         brand VARCHAR(100),
         category VARCHAR(100),
