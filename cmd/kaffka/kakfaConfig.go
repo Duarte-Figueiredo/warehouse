@@ -26,7 +26,6 @@ func StartKafka(kafkaUrl string, topicName string) {
 			reader.Close()
 		}
 
-		// Quando a mensagem é recebida tenho de chamar o handler que dá update à tabela dos produtos
 		handlers.UpdateProducts(message)
 	}
 
