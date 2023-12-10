@@ -8,11 +8,11 @@ import (
 	"time"
 
 	"github.com/tamiresviegas/warehouse/cmd/kaffka"
+	"github.com/tamiresviegas/warehouse/handlers"
 
 	"github.com/tamiresviegas/warehouse/configs"
 
 	"github.com/go-chi/chi"
-	"github.com/tamiresviegas/warehouse/handlers"
 )
 
 func main() {
@@ -32,9 +32,7 @@ func main() {
 	fmt.Println("Topic: " + topicSold + " will be used to read messages.")
 
 	connection(kafkaUrl, topicSold)
-	go kaffka.StartKafka(kafkaUrl, topicSold)
-
-	//productSold(kafkaUrl, topicSold)
+	go kaffka.StartKafkaReader(kafkaUrl, topicSold, topicSend)
 
 	startApi()
 }
