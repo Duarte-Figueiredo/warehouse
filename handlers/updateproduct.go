@@ -7,12 +7,11 @@ import (
 	"log"
 
 	"github.com/segmentio/kafka-go"
-	"github.com/segmentio/kafka-go/protocol"
 	"github.com/tamiresviegas/warehouse/models"
 )
 
 // Receives an array of products and updates them in the database
-func UpdateProducts(message kafka.Message, kafkaUrl string, topicSend string) {
+func UpdateProducts(kafkaUrl string, message kafka.Message, topicSend string) {
 	fmt.Println("receive a message: ", string(message.Value)) // [{"product_id":,"quantity":3},{"product_id":"product2","quantity":2},{"product_id":"product3","quantity":1}]
 
 	var prodQuantites []models.ProductQntUpdt
@@ -31,7 +30,7 @@ func UpdateProducts(message kafka.Message, kafkaUrl string, topicSend string) {
 			// Sends a message through kafka saying a product was updated
 			var product models.Product
 			product.Product_ID = 1
-			product.Name = "teste"
+			product.Name = "testeJen22"
 			product.Brand = "teste2"
 			product.Category = "teste3"
 			product.Quantity = 4
@@ -51,7 +50,7 @@ func UpdateProducts(message kafka.Message, kafkaUrl string, topicSend string) {
 	prodQuantites = nil
 }
 
-func writeMessageKafka(kafkaUrl string, topicName string, neededProducts []models.Product) {
+func writeMessageKafka(kafkaUrl, topicName string, neededProducts []models.Product) {
 	writer := &kafka.Writer{
 		Addr:  kafka.TCP(kafkaUrl),
 		Topic: topicName,
@@ -64,15 +63,8 @@ func writeMessageKafka(kafkaUrl string, topicName string, neededProducts []model
 		return
 	}
 
-	fmt.Println("Writing test message to topic " + topicName)
 	err := writer.WriteMessages(context.Background(), kafka.Message{
 		Value: []byte(jsonData),
-		Headers: []protocol.Header{
-			{
-				Key:   "session",
-				Value: []byte("123"),
-			},
-		},
 	})
 
 	if err != nil {

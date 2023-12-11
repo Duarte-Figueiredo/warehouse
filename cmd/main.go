@@ -24,11 +24,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	kafkaUrl := GetEnvDefault("KAFKA_URL", "") // kafka:9092
+	kafkaUrl := GetEnvDefault("KAFKA_URL", "") // TODO: COLOCAR ISTO NO COMPOSE
 	topicSend := GetEnvDefault("KAFKA_TOPIC_SEND", "")
 	topicSold := GetEnvDefault("KAFKA_TOPIC_SOLD", "")
 
-	fmt.Println("Topic: " + topicSend + " will be used to writing messages.") // TODO
+	fmt.Println("Topic: " + topicSend + " will be used to writing messages.")
 	fmt.Println("Topic: " + topicSold + " will be used to read messages.")
 
 	connection(kafkaUrl, topicSold)

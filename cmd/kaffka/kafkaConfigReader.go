@@ -12,7 +12,6 @@ func StartKafkaReader(kafkaUrl string, topicSold string, topicSend string) {
 
 	reader := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:  []string{kafkaUrl},
-		GroupID:  "consumer",
 		Topic:    topicSold,
 		MinBytes: 0,
 		MaxBytes: 10e6, // 10MB
@@ -26,7 +25,7 @@ func StartKafkaReader(kafkaUrl string, topicSold string, topicSend string) {
 			reader.Close()
 		}
 
-		handlers.UpdateProducts(message, kafkaUrl, topicSend)
+		handlers.UpdateProducts(kafkaUrl, message, topicSend)
 
 	}
 
