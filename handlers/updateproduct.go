@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/segmentio/kafka-go"
 	"github.com/tamiresviegas/warehouse/models"
@@ -28,7 +30,7 @@ func UpdateProducts(kafkaUrl string, message kafka.Message, topicSend string) {
 			// Asks more of the produtct for supliers
 
 			// Gets the product with the specified id
-			/*product, err := models.GetProduct(prodQuantites[i].Product_ID)
+			product, err := models.GetProduct(prodQuantites[i].Product_ID)
 			if err != nil {
 				fmt.Println("Error while trying to get the product ", err)
 				return
@@ -48,11 +50,10 @@ func UpdateProducts(kafkaUrl string, message kafka.Message, topicSend string) {
 
 			// Makes the product request
 			url := "http://34.16.134.101:8081/orders"
-			//payload, err := json.Marshal(prodSupReq)
+			payload, err := json.Marshal(prodSupReq)
 
-			//fmt.Println("Payload: ", string(payload))
+			fmt.Println("Payload: ", string(payload))
 
-			payload := []byte(`{"products":[{"category":"Rice","quantity":3,"price":1.4}]}`)
 			// Create a new POST request with the specified URL and payload
 			req, err := http.NewRequest("POST", url, bytes.NewBuffer(payload))
 			if err != nil {
@@ -62,6 +63,7 @@ func UpdateProducts(kafkaUrl string, message kafka.Message, topicSend string) {
 
 			// Set the Content-Type header
 			req.Header.Set("Content-Type", "application/json")
+			req.Header.Set("accept", "application/json")
 
 			// Perform the request
 			resp, err := http.DefaultClient.Do(req)
@@ -82,19 +84,51 @@ func UpdateProducts(kafkaUrl string, message kafka.Message, topicSend string) {
 				return
 			}
 
-			fmt.Println("Response Body:", body.String())*/
+			fmt.Println("Response Body:", body.String())
+
+			response := `{"Available":{"products":[{"name":"Needle Rice","brand":"Sigala","category":"Rice","quantity":0,"price":1.4}]},"NotAvailable":{"products":null}}`
+			//response := []byte(`{"Available": {"products":[{"name":"Needle Rice","brand":"Sigala","category":"Rice","quantity":0,"price":1.4}]}}`)
+
+			var productsResSup models.ProdSupliers
+			errUnm := json.Unmarshal([]byte(response), &productsResSup)
+			if errUnm != nil {
+				fmt.Println("Error:", errUnm)
+				return
+			}
+
+			// Access the data in the struct
+			fmt.Println("Available Products:")
+			for _, product := range productsResSup.Available.Products {
+				fmt.Printf("Name: %s, Brand: %s, Category: %s, Quantity: %d, Price: %f\n", product.Name, product.Brand, product.Category, product.Quantity, product.Price)
+			}
+
+			//var prodSupliers models.ProdSupliers
+			// Unmashal JSON dat into the struct
+			/*errUnm := json.Unmarshal(body.Bytes(), &prodSupliers)
+			if errUnm != nil {
+				fmt.Println("Error:", errUnm)
+				return
+			}
+			fmt.Println("prodSupliers.Available size: // CATEGORY: ", string(prodSupliers.Available[0].Products[0].Category))*/
+
+			/*for _, value := range prodSupliers.Available {
+				fmt.Println("Available:", prodQuantites[i].Product_ID, value.Name)
+			}
+			for _, value := range prodSupliers.NotAvailable {
+				fmt.Println("Unavailable:", prodQuantites[i].Product_ID, value.Name)
+			}*/
 
 			// Adds the product to the DB
 
 			// Sends a message through kafka saying a product was updated
-			var product models.Product
+			/*var product models.Product
 			product.Product_ID = 1
 			product.Name = "testeJen22"
 			product.Brand = "teste2"
 			product.Category = "teste3"
 			product.Quantity = 4
 			product.Price = 3
-			neededProducts = append(neededProducts, product)
+			neededProducts = append(neededProducts, product)*/
 		} else {
 			// Updates the products of the DB
 			models.UpdateProduct(prodQuantites[i].Product_ID, prodQuantites[i].Quantity)

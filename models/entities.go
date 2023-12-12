@@ -24,3 +24,20 @@ type ProdReq struct {
 type ProductSuppliersReq struct {
 	Products []ProdReq `json:"products"`
 }
+
+type ProductsRespSuppliers struct {
+	Name     string  `json:"name"`
+	Brand    string  `json:"brand"`
+	Category string  `json:"category"`
+	Quantity int     `json:"quantity"`
+	Price    float64 `json:"price"`
+}
+
+type Products struct {
+	Products []ProductsRespSuppliers `json:"products"`
+}
+
+type ProdSupliers struct {
+	Available    Products `json:"Available"`
+	NotAvailable Products `json:"NotAvailable"`
+}
