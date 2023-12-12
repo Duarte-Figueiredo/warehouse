@@ -14,3 +14,13 @@ type ProductQntUpdt struct {
 	Product_ID int64 `json:"product_id"`
 	Quantity   int   `json:"quantity"`
 }
+
+type ProdReq struct {
+	Category string  `json:"category"`
+	Quantity int     `json:"quantity"`
+	Price    float64 `json:"price"`
+}
+
+type ProductSuppliersReq struct {
+	Products []ProdReq `json:"products"`
+}

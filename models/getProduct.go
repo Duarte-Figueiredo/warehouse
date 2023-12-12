@@ -32,6 +32,22 @@ func GetAllProducts() (products []Product, err error) {
 	return
 }
 
+// Get product of a specified id
+func GetProduct(id int64) (product Product, err error) {
+
+	conn, err := db.OpenConnection()
+	if err != nil {
+		return
+	}
+	defer conn.Close()
+
+	row := conn.QueryRow(`SELECT * FROM PRODUCT WHERE product_id=$1`, id)
+
+	err = row.Scan(&product.Product_ID, &product.Name, &product.Brand, &product.Category, &product.Quantity, &product.Price)
+
+	return
+}
+
 // Queries DB to return only the products with the given fields (it has to match all the filtering fields)
 func GetProductFiltered(category string, brand string, maxPrice float64) (products []Product, err error) {
 
