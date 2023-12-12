@@ -1,12 +1,10 @@
 package handlers
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
 
 	"github.com/segmentio/kafka-go"
 	"github.com/tamiresviegas/warehouse/models"
@@ -30,7 +28,7 @@ func UpdateProducts(kafkaUrl string, message kafka.Message, topicSend string) {
 			// Asks more of the produtct for supliers
 
 			// Gets the product with the specified id
-			product, err := models.GetProduct(prodQuantites[i].Product_ID)
+			/*product, err := models.GetProduct(prodQuantites[i].Product_ID)
 			if err != nil {
 				fmt.Println("Error while trying to get the product ", err)
 				return
@@ -84,19 +82,19 @@ func UpdateProducts(kafkaUrl string, message kafka.Message, topicSend string) {
 				return
 			}
 
-			fmt.Println("Response Body:", body.String())
+			fmt.Println("Response Body:", body.String())*/
 
 			// Adds the product to the DB
 
 			// Sends a message through kafka saying a product was updated
-			/*var product models.Product
+			var product models.Product
 			product.Product_ID = 1
 			product.Name = "testeJen22"
 			product.Brand = "teste2"
 			product.Category = "teste3"
 			product.Quantity = 4
 			product.Price = 3
-			neededProducts = append(neededProducts, product)*/
+			neededProducts = append(neededProducts, product)
 		} else {
 			// Updates the products of the DB
 			models.UpdateProduct(prodQuantites[i].Product_ID, prodQuantites[i].Quantity)
