@@ -17,7 +17,7 @@ func UpdateProducts(kafkaUrl string, message kafka.Message, topicSend string) {
 	fmt.Println("receive a message: ", string(message.Value)) // [{"product_id":,"quantity":3},{"product_id":"product2","quantity":2},{"product_id":"product3","quantity":1}]
 
 	var prodQuantites []models.ProductQntUpdt
-	var neededProducts []models.Product
+	var neededProducts []models.ProductsRespSuppliers
 
 	if err := json.Unmarshal([]byte(string(message.Value)), &prodQuantites); err != nil {
 		fmt.Printf("Error decoding JSON: %v\n", err)
@@ -35,7 +35,6 @@ func UpdateProducts(kafkaUrl string, message kafka.Message, topicSend string) {
 				fmt.Println("Error while trying to get the product ", err)
 				return
 			}
-			fmt.Println("Received: ", product.Product_ID, product.Brand, product.Category, product.Name, product.Price, product.Quantity)
 
 			var prodReq models.ProdReq
 			prodReq.Category = product.Category
@@ -51,8 +50,6 @@ func UpdateProducts(kafkaUrl string, message kafka.Message, topicSend string) {
 			// Makes the product request
 			url := "http://34.16.134.101:8081/orders"
 			payload, err := json.Marshal(prodSupReq)
-
-			fmt.Println("Payload: ", string(payload))
 
 			// Create a new POST request with the specified URL and payload
 			req, err := http.NewRequest("POST", url, bytes.NewBuffer(payload))
@@ -86,49 +83,20 @@ func UpdateProducts(kafkaUrl string, message kafka.Message, topicSend string) {
 
 			fmt.Println("Response Body:", body.String())
 
-			response := `{"Available":{"products":[{"name":"Needle Rice","brand":"Sigala","category":"Rice","quantity":0,"price":1.4}]},"NotAvailable":{"products":null}}`
-			//response := []byte(`{"Available": {"products":[{"name":"Needle Rice","brand":"Sigala","category":"Rice","quantity":0,"price":1.4}]}}`)
-
 			var productsResSup models.ProdSupliers
-			errUnm := json.Unmarshal([]byte(response), &productsResSup)
+			errUnm := json.Unmarshal(body.Bytes(), &productsResSup)
 			if errUnm != nil {
 				fmt.Println("Error:", errUnm)
 				return
 			}
 
-			// Access the data in the struct
-			fmt.Println("Available Products:")
-			for _, product := range productsResSup.Available.Products {
+			for _, productAdd := range productsResSup.Available.Products {
+				// Adds the product to the DataBase => Update
+				models.UpdateProductName(productAdd)
+				// Add to the array of products added to the DB to send through kafka
+				neededProducts = append(neededProducts, productAdd)
 				fmt.Printf("Name: %s, Brand: %s, Category: %s, Quantity: %d, Price: %f\n", product.Name, product.Brand, product.Category, product.Quantity, product.Price)
 			}
-
-			//var prodSupliers models.ProdSupliers
-			// Unmashal JSON dat into the struct
-			/*errUnm := json.Unmarshal(body.Bytes(), &prodSupliers)
-			if errUnm != nil {
-				fmt.Println("Error:", errUnm)
-				return
-			}
-			fmt.Println("prodSupliers.Available size: // CATEGORY: ", string(prodSupliers.Available[0].Products[0].Category))*/
-
-			/*for _, value := range prodSupliers.Available {
-				fmt.Println("Available:", prodQuantites[i].Product_ID, value.Name)
-			}
-			for _, value := range prodSupliers.NotAvailable {
-				fmt.Println("Unavailable:", prodQuantites[i].Product_ID, value.Name)
-			}*/
-
-			// Adds the product to the DB
-
-			// Sends a message through kafka saying a product was updated
-			/*var product models.Product
-			product.Product_ID = 1
-			product.Name = "testeJen22"
-			product.Brand = "teste2"
-			product.Category = "teste3"
-			product.Quantity = 4
-			product.Price = 3
-			neededProducts = append(neededProducts, product)*/
 		} else {
 			// Updates the products of the DB
 			models.UpdateProduct(prodQuantites[i].Product_ID, prodQuantites[i].Quantity)
@@ -143,7 +111,7 @@ func UpdateProducts(kafkaUrl string, message kafka.Message, topicSend string) {
 	prodQuantites = nil
 }
 
-func writeMessageKafka(kafkaUrl, topicName string, neededProducts []models.Product) {
+func writeMessageKafka(kafkaUrl, topicName string, neededProducts []models.ProductsRespSuppliers) {
 	writer := &kafka.Writer{
 		Addr:  kafka.TCP(kafkaUrl),
 		Topic: topicName,
