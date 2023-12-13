@@ -29,6 +29,8 @@ services:
       KAFKA_MIN_INSYNC_REPLICAS: '1'
     networks:
       - warehouse_network
+    extra_hosts:
+      - "kafka-ubuntu-1-vm.us-east1-b.c.cosn-407800.internal:34.73.214.47"
 
   init-kafka:
     image: confluentinc/cp-kafka:6.1.1
@@ -43,7 +45,8 @@ services:
       kafka-topics --bootstrap-server kafka:29092 --list
 
       echo -e 'Creating kafka topics'
-      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic test --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic sendProdUpdtNew --replication-factor 1 --partitions 1
+      kafka-topics --bootstrap-server kafka:29092 --create --if-not-exists --topic soldProduct --replication-factor 1 --partitions 1
 
       echo -e 'Successfully created the following topics:'
       kafka-topics --bootstrap-server kafka:29092 --list
@@ -64,7 +67,10 @@ services:
       - warehouse_network
     environment:
       KAFKA_URL: 'kafka:9092'
-      KAFKA_TOPIC: 'test'
+      KAFKA_TOPIC_SEND: 'sendProdUpdtNew'
+      KAFKA_TOPIC_SOLD: 'soldProduct' 
+    extra_hosts:
+      - "kafka-ubuntu-1-vm.us-east1-b.c.cosn-407800.internal:34.73.214.47"
 
   db:
     image: postgres
