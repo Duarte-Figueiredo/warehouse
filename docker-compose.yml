@@ -24,13 +24,11 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2182'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://172.176.113.155:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: '1'
       KAFKA_MIN_INSYNC_REPLICAS: '1'
     networks:
       - warehouse_network
-    extra_hosts:
-      - "kafka-ubuntu-1-vm.us-east1-b.c.cosn-407800.internal:34.73.214.47"
 
   init-kafka:
     image: confluentinc/cp-kafka:6.1.1
@@ -66,11 +64,9 @@ services:
     networks:
       - warehouse_network
     environment:
-      KAFKA_URL: 'kafka:9092'
-      KAFKA_TOPIC_SEND: 'sendProdUpdtNew'
-      KAFKA_TOPIC_SOLD: 'soldProduct' 
-    extra_hosts:
-      - "kafka-ubuntu-1-vm.us-east1-b.c.cosn-407800.internal:34.73.214.47"
+      KAFKA_URL: '172.176.113.155:9092'
+      KAFKA_TOPIC_SEND: 'purchasedproducts'
+      KAFKA_TOPIC_SOLD: 'products' 
 
   db:
     image: postgres
