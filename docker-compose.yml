@@ -65,8 +65,8 @@ services:
       - warehouse_network
     environment:
       KAFKA_URL: '172.176.113.155:9092'
-      KAFKA_TOPIC_SEND: 'purchasedproducts'
-      KAFKA_TOPIC_SOLD: 'products' 
+      KAFKA_TOPIC_PRODUCTS: 'products'
+      KAFKA_TOPIC_PURCHASEDPRODUCTS: 'purchasedproducts' 
 
   db:
     image: postgres

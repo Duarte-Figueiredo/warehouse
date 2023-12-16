@@ -8,11 +8,11 @@ import (
 	"github.com/tamiresviegas/warehouse/handlers"
 )
 
-func StartKafkaReader(kafkaUrl string, topicSold string, topicSend string) {
+func StartKafkaReader(kafkaUrl string, topicPurchasedProducts string, topicProducts string) {
 
 	reader := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:  []string{kafkaUrl},
-		Topic:    topicSold,
+		Topic:    topicPurchasedProducts,
 		MinBytes: 0,
 		MaxBytes: 10e6, // 10MB
 	})
@@ -25,7 +25,7 @@ func StartKafkaReader(kafkaUrl string, topicSold string, topicSend string) {
 			reader.Close()
 		}
 
-		handlers.UpdateProducts(kafkaUrl, message, topicSend)
+		handlers.UpdateProducts(kafkaUrl, message, topicProducts)
 
 	}
 

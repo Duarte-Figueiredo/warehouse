@@ -24,15 +24,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	kafkaUrl := GetEnvDefault("KAFKA_URL", "") // TODO: COLOCAR ISTO NO COMPOSE
-	topicSend := GetEnvDefault("KAFKA_TOPIC_SEND", "")
-	topicSold := GetEnvDefault("KAFKA_TOPIC_SOLD", "")
+	kafkaUrl := GetEnvDefault("KAFKA_URL", "")                                   // TODO: COLOCAR ISTO NO COMPOSE
+	topicProducts := GetEnvDefault("KAFKA_TOPIC_PRODUCTS", "")                   // Were we write products updates from our DB
+	topicPurchasedProducts := GetEnvDefault("KAFKA_TOPIC_PURCHASEDPRODUCTS", "") // Were we read  updates on products' quantities
 
-	fmt.Println("Topic: " + topicSend + " will be used to writing messages.")
-	fmt.Println("Topic: " + topicSold + " will be used to read messages.")
+	fmt.Println("Topic: " + topicProducts + " will be used to writing messages.")
+	fmt.Println("Topic: " + topicPurchasedProducts + " will be used to read messages.")
 
-	connection(kafkaUrl, topicSold)
-	go kaffka.StartKafkaReader(kafkaUrl, topicSold, topicSend)
+	connection(kafkaUrl, topicPurchasedProducts)
+	go kaffka.StartKafkaReader(kafkaUrl, topicPurchasedProducts, topicProducts)
 
 	startApi()
 }

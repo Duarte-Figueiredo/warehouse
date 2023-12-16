@@ -13,7 +13,7 @@ import (
 )
 
 // Receives an array of products and updates them in the database
-func UpdateProducts(kafkaUrl string, message kafka.Message, topicSend string) {
+func UpdateProducts(kafkaUrl string, message kafka.Message, topicProducts string) {
 	fmt.Println("receive a message: ", string(message.Value)) // [{"product_id":,"quantity":3},{"product_id":"product2","quantity":2},{"product_id":"product3","quantity":1}]
 
 	var prodQuantites []models.ProductQntUpdt
@@ -104,17 +104,17 @@ func UpdateProducts(kafkaUrl string, message kafka.Message, topicSend string) {
 	}
 
 	if len(neededProducts) != 0 {
-		writeMessageKafka(kafkaUrl, topicSend, neededProducts)
+		writeMessageKafka(kafkaUrl, topicProducts, neededProducts)
 	}
 
 	neededProducts = nil
 	prodQuantites = nil
 }
 
-func writeMessageKafka(kafkaUrl, topicName string, neededProducts []models.ProductsRespSuppliers) {
+func writeMessageKafka(kafkaUrl, topicProducts string, neededProducts []models.ProductsRespSuppliers) {
 	writer := &kafka.Writer{
 		Addr:  kafka.TCP(kafkaUrl),
-		Topic: topicName,
+		Topic: topicProducts,
 	}
 
 	// Convert struct to JSON
